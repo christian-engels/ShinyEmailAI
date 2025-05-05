@@ -1,4 +1,6 @@
-ShinyEmailAI is an R package that integrates Microsoft Outlook 365 with AI-assisted email drafting. It provides an interactive Shiny application that allows users to:
+![Shiny Email AI User Interface](images/ShinyEmailAI.png)
+
+**ShinyEmailAI** is an R package that integrates Microsoft Outlook 365 with AI-assisted email drafting. It provides an interactive Shiny application that allows users to:
 
 - Browse, search, and sort Outlook emails
 - View complete email content with HTML formatting and attachments
