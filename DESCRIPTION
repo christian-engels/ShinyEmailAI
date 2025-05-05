@@ -1,0 +1,44 @@
+Package: ShinyEmailAI
+Title: AI-Assisted Email Management for Microsoft Outlook 365
+Version: 0.1.0
+Authors@R: 
+     person(given = "Christian",
+           family = "Engels",
+           email = "ce50@st-andrews.ac.uk",
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-6198-431X"))
+Author: Christian Engels [aut, cre] (<https://orcid.org/0000-0002-6198-431X>)
+Maintainer: Christian Engels <ce50@st-andrews.ac.uk>
+Description: Provides an interface for browsing, searching, and replying to Microsoft
+    Outlook 365 emails with AI assistance. Allows users to use context-aware AI models
+    to draft and refine email responses. Integrates with Microsoft Graph API and
+    supports Anthropic Claude models.
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports: 
+    shiny,
+    shinyjs,
+    bslib,
+    DT,
+    stringr,
+    markdown,
+    htmltools,
+    rvest,
+    tibble,
+    purrr,
+    openssl,
+    mime,
+    magrittr,
+    dplyr,
+    httr,
+    stats,
+    Microsoft365R,
+    ellmer,
+    readr,
+    rlang
+Suggests:
+    testthat
+Depends: 
+    R (>= 4.1.0)
+License: MIT + file LICENSE
