@@ -51,7 +51,7 @@ context/
   context-folder-1/
     document1.pdf
     document2.pdf
-  context-folder-1/
+  context-folder-2/
     document3.pdf
   no-context/
     do-not-change-this-folder.md
