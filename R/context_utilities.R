@@ -44,9 +44,8 @@ email_create_context <- function(base_dir, sample_contexts = TRUE, copy_prompts 
   # Create sample context subdirectories if requested
   if (sample_contexts) {
     sample_folders <- c(
-      "behavioural-finance",
-      "corporate-finance",
-      "service-role",
+      "context-folder-1",
+      "context-folder-2",
       "no-context"
     )
 

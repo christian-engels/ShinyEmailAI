@@ -48,10 +48,10 @@ The application supports using context files (as PDFs) to enhance AI responses. 
 
 ```
 context/
-  behavioural-finance/
+  context-folder-1/
     document1.pdf
     document2.pdf
-  corporate-finance/
+  context-folder-1/
     document3.pdf
   no-context/
     do-not-change-this-folder.md
