@@ -204,7 +204,7 @@ email_run_app <- function(base_dir = NULL, ...) {
 
     if (is_claude) {
       if (!is_api_key_set()) stop("Anthropic API key not set. Please set your API key first.")
-      ellmer::chat_claude(
+      ellmer::chat_anthropic(
         system_prompt = system_prompt,
         model         = model,
         turns         = turns,
@@ -443,6 +443,8 @@ email_run_app <- function(base_dir = NULL, ...) {
                   # "GPT-4.1-mini" = "gpt-4.1-mini",
                   # "o4-mini" = "o4-mini",
                   # "o3-mini" = "o3-mini",
+                  "Claude 4 Sonnet" = "claude-sonnet-4-20250514",
+                  "Claude 4 Opus" = "claude-opus-4-20250514",
                   "Claude 3.7 Sonnet" = "claude-3-7-sonnet-latest",
                   "Claude 3.5 Sonnet" = "claude-3-5-sonnet-latest",
                   "Claude 3.5 Haiku" = "claude-3-5-haiku-latest"
