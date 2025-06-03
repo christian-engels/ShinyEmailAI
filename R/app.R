@@ -204,7 +204,7 @@ email_run_app <- function(base_dir = NULL, ...) {
 
     if (is_claude) {
       if (!is_api_key_set()) stop("Anthropic API key not set. Please set your API key first.")
-      ellmer::chat_anthropic(
+      ellmer::chat_claude(
         system_prompt = system_prompt,
         model         = model,
         turns         = turns,
