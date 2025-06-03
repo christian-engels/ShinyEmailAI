@@ -449,7 +449,7 @@ email_run_app <- function(base_dir = NULL, ...) {
                   "Claude 3.5 Sonnet" = "claude-3-5-sonnet-latest",
                   "Claude 3.5 Haiku" = "claude-3-5-haiku-latest"
                 ),
-                selected = "claude-3-7-sonnet-latest",
+                selected = "claude-sonnet-4-20250514",
                 width = "100%"
               )
             ),
