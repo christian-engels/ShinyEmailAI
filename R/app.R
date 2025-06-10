@@ -214,21 +214,20 @@ email_run_app <- function(base_dir = NULL, ...) {
     is_claude <- grepl("claude", model, ignore.case = TRUE)
 
     if (is_claude) {
-      if (!is_api_key_set())
+      if (!is_api_key_set()) {
         stop("Anthropic API key not set. Please set your API key first.")
+      }
       ellmer::chat_anthropic(
         system_prompt = system_prompt,
         model = model,
-        turns = turns,
         api_args = list(temperature = 1)
-      )
+      )$set_turns(turns)
     } else {
       ellmer::chat_openai(
         system_prompt = system_prompt,
         model = model,
-        turns = turns,
         api_args = list(temperature = 1)
-      )
+      )$set_turns(turns)
     }
   }
 
