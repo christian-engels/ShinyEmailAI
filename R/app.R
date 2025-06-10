@@ -11,7 +11,7 @@
 #' @importFrom stats setNames
 #' @import ellmer
 #' @import shinyjs
-#' @importFrom ellmer chat_claude chat_openai interpolate_file content_pdf_file
+#' @importFrom ellmer chat_anthropic chat_openai interpolate_file content_pdf_file
 #' @export
 #' @examples
 #' \dontrun{
@@ -39,8 +39,11 @@ email_run_app <- function(base_dir = NULL, ...) {
   if (!dir.exists(base_dir)) {
     rlang::abort(
       stringr::str_c(
-        "Base directory does not exist: ", base_dir,
-        "\nPlease first run: email_create_context('", base_dir, "')"
+        "Base directory does not exist: ",
+        base_dir,
+        "\nPlease first run: email_create_context('",
+        base_dir,
+        "')"
       )
     )
   }
@@ -48,8 +51,11 @@ email_run_app <- function(base_dir = NULL, ...) {
   if (!dir.exists(context_dir)) {
     rlang::abort(
       stringr::str_c(
-        "Context directory does not exist: ", context_dir,
-        "\nPlease first run: email_create_context('", base_dir, "')"
+        "Context directory does not exist: ",
+        context_dir,
+        "\nPlease first run: email_create_context('",
+        base_dir,
+        "')"
       )
     )
   }
@@ -57,8 +63,11 @@ email_run_app <- function(base_dir = NULL, ...) {
   if (!dir.exists(prompts_dir)) {
     rlang::abort(
       stringr::str_c(
-        "Prompts directory does not exist: ", prompts_dir,
-        "\\nPlease first run: email_create_context('", base_dir, "')"
+        "Prompts directory does not exist: ",
+        prompts_dir,
+        "\\nPlease first run: email_create_context('",
+        base_dir,
+        "')"
       )
     )
   }
@@ -176,11 +185,13 @@ email_run_app <- function(base_dir = NULL, ...) {
   }
 
   # Function to create a new chat session
-  new_chat <- function(body_with_header,
-                       model = "gpt-4o",
-                       turns = NULL,
-                       prompts_dir,
-                       email_samples_path) {
+  new_chat <- function(
+    body_with_header,
+    model = "gpt-4o",
+    turns = NULL,
+    prompts_dir,
+    email_samples_path
+  ) {
     system_prompt_path <- file.path(prompts_dir, "prompt-system.md")
     if (!file.exists(system_prompt_path)) {
       stop("System prompt template not found: ", system_prompt_path)
@@ -194,28 +205,29 @@ email_run_app <- function(base_dir = NULL, ...) {
 
     system_prompt <- ellmer::interpolate_file(
       system_prompt_path,
-      emailExchange   = body_with_header,
-      userName        = "User",
-      emailSamples    = email_samples_content,
+      emailExchange = body_with_header,
+      userName = "User",
+      emailSamples = email_samples_content,
       currentDateTime = Sys.time()
     )
 
     is_claude <- grepl("claude", model, ignore.case = TRUE)
 
     if (is_claude) {
-      if (!is_api_key_set()) stop("Anthropic API key not set. Please set your API key first.")
-      ellmer::chat_claude(
+      if (!is_api_key_set())
+        stop("Anthropic API key not set. Please set your API key first.")
+      ellmer::chat_anthropic(
         system_prompt = system_prompt,
-        model         = model,
-        turns         = turns,
-        api_args      = list(temperature = 1)
+        model = model,
+        turns = turns,
+        api_args = list(temperature = 1)
       )
     } else {
       ellmer::chat_openai(
         system_prompt = system_prompt,
-        model         = model,
-        turns         = turns,
-        api_args      = list(temperature = 1)
+        model = model,
+        turns = turns,
+        api_args = list(temperature = 1)
       )
     }
   }
@@ -224,7 +236,8 @@ email_run_app <- function(base_dir = NULL, ...) {
   ui <- shiny::fluidPage(
     shinyjs::useShinyjs(),
     theme = my_theme,
-    shiny::tags$style(shiny::HTML("
+    shiny::tags$style(shiny::HTML(
+      "
       body {
         background: linear-gradient(120deg, #f8fafc 0%, #e9f1fb 100%);
         min-height: 100vh;
@@ -351,10 +364,15 @@ email_run_app <- function(base_dir = NULL, ...) {
         .email-preview { min-height: 120px; }
         .inbox-table-area { min-height: 120px; }
       }
-    ")),
+    "
+    )),
     shiny::div(
       class = "app-header",
-      shiny::icon("envelope-open-text", class = "text-primary", style = "font-size: 1.8rem;"),
+      shiny::icon(
+        "envelope-open-text",
+        class = "text-primary",
+        style = "font-size: 1.8rem;"
+      ),
       shiny::span(class = "app-title", "ShinyEmailAI"),
       shiny::div(
         style = "margin-left: auto; display: flex; gap: 10px;",
@@ -424,13 +442,21 @@ email_run_app <- function(base_dir = NULL, ...) {
         width = 7,
         shiny::div(
           class = "main-card",
-          shiny::div(class = "section-title", shiny::icon("envelope"), "Email Preview"),
+          shiny::div(
+            class = "section-title",
+            shiny::icon("envelope"),
+            "Email Preview"
+          ),
           shiny::div(
             class = "email-preview",
             shiny::uiOutput("email_body")
           ),
           shiny::hr(style = "margin: 0.5rem 0 0.5rem 0;"),
-          shiny::div(class = "section-title", shiny::icon("magic"), "Draft & Reply"),
+          shiny::div(
+            class = "section-title",
+            shiny::icon("magic"),
+            "Draft & Reply"
+          ),
           shiny::fluidRow(
             shiny::column(
               width = 4,
@@ -562,7 +588,8 @@ email_run_app <- function(base_dir = NULL, ...) {
     ))
 
     # Only initialize the app after user acknowledges privacy notice
-    shiny::observeEvent(input$privacy_accept,
+    shiny::observeEvent(
+      input$privacy_accept,
       {
         shiny::removeModal()
       },
@@ -599,7 +626,11 @@ email_run_app <- function(base_dir = NULL, ...) {
 
       # Add folders if they exist
       if (dir.exists(context_dir)) {
-        context_folders <- list.dirs(context_dir, recursive = FALSE, full.names = FALSE)
+        context_folders <- list.dirs(
+          context_dir,
+          recursive = FALSE,
+          full.names = FALSE
+        )
         if (length(context_folders) > 0) {
           # Create named vector for folders
           folder_choices <- setNames(context_folders, context_folders)
@@ -648,7 +679,9 @@ email_run_app <- function(base_dir = NULL, ...) {
       # Create modal dialog for API key input
       shiny::showModal(shiny::modalDialog(
         title = "Set Anthropic API Key",
-        shiny::textInput("api_key_input", "Enter your Anthropic API Key:",
+        shiny::textInput(
+          "api_key_input",
+          "Enter your Anthropic API Key:",
           value = values$api_key %||% "",
           width = "100%",
           placeholder = "sk-ant-api..."
@@ -670,7 +703,11 @@ email_run_app <- function(base_dir = NULL, ...) {
 
       if (nzchar(api_key)) {
         # Show a notification
-        id <- shiny::showNotification("Saving API key...", type = "message", duration = NULL)
+        id <- shiny::showNotification(
+          "Saving API key...",
+          type = "message",
+          duration = NULL
+        )
 
         tryCatch(
           {
@@ -696,15 +733,27 @@ email_run_app <- function(base_dir = NULL, ...) {
 
             # Update notification
             shiny::removeNotification(id)
-            shiny::showNotification("API key saved and activated successfully", type = "message", duration = 5)
+            shiny::showNotification(
+              "API key saved and activated successfully",
+              type = "message",
+              duration = 5
+            )
           },
           error = function(e) {
             shiny::removeNotification(id)
-            shiny::showNotification(paste("Error saving API key:", e$message), type = "error", duration = 10)
+            shiny::showNotification(
+              paste("Error saving API key:", e$message),
+              type = "error",
+              duration = 10
+            )
           }
         )
       } else {
-        shiny::showNotification("Please enter a valid API key", type = "warning", duration = 5)
+        shiny::showNotification(
+          "Please enter a valid API key",
+          type = "warning",
+          duration = 5
+        )
       }
     })
 
@@ -712,7 +761,11 @@ email_run_app <- function(base_dir = NULL, ...) {
     shiny::observeEvent(input$auth_btn, {
       # Check for API key first
       if (!is_api_key_set()) {
-        shiny::showNotification("Please set your Anthropic API key first", type = "warning", duration = 5)
+        shiny::showNotification(
+          "Please set your Anthropic API key first",
+          type = "warning",
+          duration = 5
+        )
         return()
       }
 
@@ -754,7 +807,12 @@ email_run_app <- function(base_dir = NULL, ...) {
     # Helper function to handle authentication
     handle_outlook_auth <- function(type) {
       shiny::removeModal()
-      shiny::showNotification("Authenticating with Outlook... You may need to check your R console for a URL.", type = "message", duration = NULL, id = "auth_status")
+      shiny::showNotification(
+        "Authenticating with Outlook... You may need to check your R console for a URL.",
+        type = "message",
+        duration = NULL,
+        id = "auth_status"
+      )
 
       # Set browser options to ensure automatic browser opening
       options(
@@ -793,7 +851,11 @@ email_run_app <- function(base_dir = NULL, ...) {
         },
         error = function(e) {
           shiny::removeNotification(id = "auth_status")
-          shiny::showNotification(paste("Authentication error:", e$message), type = "error", duration = 10)
+          shiny::showNotification(
+            paste("Authentication error:", e$message),
+            type = "error",
+            duration = 10
+          )
         }
       )
     }
@@ -827,7 +889,8 @@ email_run_app <- function(base_dir = NULL, ...) {
 
       # Sort the data
       if (!is.null(input$sort_order)) {
-        df <- switch(input$sort_order,
+        df <- switch(
+          input$sort_order,
           "date_desc" = dplyr::arrange(df, dplyr::desc(sent_datetime)),
           "date_asc" = dplyr::arrange(df, sent_datetime),
           "sender_asc" = dplyr::arrange(df, from_names),
@@ -851,7 +914,11 @@ email_run_app <- function(base_dir = NULL, ...) {
         return()
       }
 
-      shiny::showNotification("Refreshing inbox...", type = "message", duration = NULL)
+      shiny::showNotification(
+        "Refreshing inbox...",
+        type = "message",
+        duration = NULL
+      )
 
       tryCatch(
         {
@@ -862,7 +929,10 @@ email_run_app <- function(base_dir = NULL, ...) {
             ~ tidy_email(.x, include_body = "html")
           )
 
-          shiny::showNotification("Inbox refreshed successfully", type = "message")
+          shiny::showNotification(
+            "Inbox refreshed successfully",
+            type = "message"
+          )
         },
         error = function(e) {
           shiny::showNotification(
@@ -879,7 +949,9 @@ email_run_app <- function(base_dir = NULL, ...) {
       # Check if authenticated
       if (is.null(values$outlook)) {
         return(DT::datatable(
-          data.frame(Message = "Please authenticate with Outlook using the button above"),
+          data.frame(
+            Message = "Please authenticate with Outlook using the button above"
+          ),
           options = list(
             dom = "t",
             ordering = FALSE,
@@ -970,7 +1042,11 @@ email_run_app <- function(base_dir = NULL, ...) {
             shiny::div(
               class = "text-center",
               shiny::tags$i(class = "fas fa-lock fa-3x mb-2"),
-              shiny::h3("Welcome to ShinyEmailAI", class = "mt-2", style = "font-size: 1.3rem;"),
+              shiny::h3(
+                "Welcome to ShinyEmailAI",
+                class = "mt-2",
+                style = "font-size: 1.3rem;"
+              ),
               shiny::p(
                 "First, click the 'Set Anthropic API Key' button to configure your API key",
                 class = "mt-2 mb-1",
@@ -995,7 +1071,11 @@ email_run_app <- function(base_dir = NULL, ...) {
             shiny::div(
               class = "text-center",
               shiny::tags$i(class = "fas fa-key fa-3x mb-2"),
-              shiny::h3("Welcome to ShinyEmailAI", class = "mt-2", style = "font-size: 1.3rem;"),
+              shiny::h3(
+                "Welcome to ShinyEmailAI",
+                class = "mt-2",
+                style = "font-size: 1.3rem;"
+              ),
               shiny::p(
                 "Click the 'Authenticate Outlook' button in the top-right corner to get started",
                 class = "mt-2",
@@ -1018,7 +1098,11 @@ email_run_app <- function(base_dir = NULL, ...) {
             shiny::div(
               class = "text-center",
               shiny::tags$i(class = "fas fa-envelope fa-3x mb-2"),
-              shiny::h4("Select an email", class = "mt-2", style = "font-size: 1.1rem;"),
+              shiny::h4(
+                "Select an email",
+                class = "mt-2",
+                style = "font-size: 1.1rem;"
+              ),
               shiny::p(
                 "Choose an email from the inbox to view its content",
                 class = "small",
@@ -1084,12 +1168,19 @@ email_run_app <- function(base_dir = NULL, ...) {
               shiny::div(
                 class = "d-flex justify-content-between align-items-center",
                 shiny::div(
-                  shiny::tags$h4(email$subject, class = "mb-1", style = "font-size: 0.95rem; margin-bottom: 0.2rem;"),
+                  shiny::tags$h4(
+                    email$subject,
+                    class = "mb-1",
+                    style = "font-size: 0.95rem; margin-bottom: 0.2rem;"
+                  ),
                   shiny::div(
                     class = "text-muted small",
                     style = "font-size: 0.75rem;",
                     shiny::div(
-                      shiny::tags$span(shiny::tags$strong("From: "), email$from_names)
+                      shiny::tags$span(
+                        shiny::tags$strong("From: "),
+                        email$from_names
+                      )
                     ),
                     shiny::div(
                       shiny::tags$span(
@@ -1192,7 +1283,10 @@ email_run_app <- function(base_dir = NULL, ...) {
                         label = paste0(
                           att$properties$name,
                           " (",
-                          format(round(att$properties$size / 1024), big.mark = ","),
+                          format(
+                            round(att$properties$size / 1024),
+                            big.mark = ","
+                          ),
                           " KB)"
                         ),
                         icon = shiny::icon("download"),
@@ -1345,7 +1439,9 @@ email_run_app <- function(base_dir = NULL, ...) {
               prompts_dir = prompts_dir,
               email_samples_path = file.path(prompts_dir, "email-samples.md")
             )
-            values$chat_store[[values$selected_email_id]]$model <- selected_model
+            values$chat_store[[
+              values$selected_email_id
+            ]]$model <- selected_model
 
             if (is.null(current_chat)) {
               shiny::showNotification(
@@ -1397,9 +1493,13 @@ email_run_app <- function(base_dir = NULL, ...) {
           }
 
           # Get the updated draft with context if available and there are actual PDF files
-          if (!is.null(values$context_files) && length(values$context_files) > 0) {
+          if (
+            !is.null(values$context_files) && length(values$context_files) > 0
+          ) {
             # Verify the files exist before trying to use them
-            existing_files <- values$context_files[file.exists(values$context_files)]
+            existing_files <- values$context_files[file.exists(
+              values$context_files
+            )]
 
             if (length(existing_files) > 0) {
               # Create a list of PDF content files
@@ -1418,7 +1518,11 @@ email_run_app <- function(base_dir = NULL, ...) {
           }
 
           # Update the textarea with the new draft
-          shiny::updateTextAreaInput(session, "response_text", value = updated_draft)
+          shiny::updateTextAreaInput(
+            session,
+            "response_text",
+            value = updated_draft
+          )
 
           # Save the updated draft in the chat store
           values$chat_store[[values$selected_email_id]]$draft <- updated_draft
@@ -1450,7 +1554,9 @@ email_run_app <- function(base_dir = NULL, ...) {
           !is.null(values$chat_store[[values$selected_email_id]])
       ) {
         # Save the current draft to the chat store
-        values$chat_store[[values$selected_email_id]]$draft <- input$response_text
+        values$chat_store[[
+          values$selected_email_id
+        ]]$draft <- input$response_text
       }
     })
 
@@ -1467,7 +1573,10 @@ email_run_app <- function(base_dir = NULL, ...) {
           type = "warning"
         )
       } else if (input$response_text == "") {
-        shiny::showNotification("Please enter text for your response", type = "warning")
+        shiny::showNotification(
+          "Please enter text for your response",
+          type = "warning"
+        )
       } else {
         # Get the current draft text
         current_draft <- input$response_text
@@ -1500,9 +1609,14 @@ email_run_app <- function(base_dir = NULL, ...) {
             )
 
             # Get the email object and create the reply
-            email <- values$outlook$get_inbox()$get_email(values$selected_email_id)
+            email <- values$outlook$get_inbox()$get_email(
+              values$selected_email_id
+            )
             email$create_reply(current_draft_html_style)
-            shiny::showNotification("'Reply' draft created in Outlook", type = "message")
+            shiny::showNotification(
+              "'Reply' draft created in Outlook",
+              type = "message"
+            )
           },
           error = function(e) {
             shiny::removeNotification(id)
@@ -1528,7 +1642,10 @@ email_run_app <- function(base_dir = NULL, ...) {
           type = "warning"
         )
       } else if (input$response_text == "") {
-        shiny::showNotification("Please enter text for your response", type = "warning")
+        shiny::showNotification(
+          "Please enter text for your response",
+          type = "warning"
+        )
       } else {
         # Get the current draft text
         current_draft <- input$response_text
@@ -1561,9 +1678,14 @@ email_run_app <- function(base_dir = NULL, ...) {
             )
 
             # Get the email object and create the reply
-            email <- values$outlook$get_inbox()$get_email(values$selected_email_id)
+            email <- values$outlook$get_inbox()$get_email(
+              values$selected_email_id
+            )
             email$create_reply_all(current_draft_html_style)
-            shiny::showNotification("'Reply All' draft created in Outlook", type = "message")
+            shiny::showNotification(
+              "'Reply All' draft created in Outlook",
+              type = "message"
+            )
           },
           error = function(e) {
             shiny::removeNotification(id)
@@ -1697,13 +1819,16 @@ email_run_app <- function(base_dir = NULL, ...) {
     )
 
     # Handle 'Mark Read & Archive' button
-    shiny::observeEvent(input$archive_btn,
+    shiny::observeEvent(
+      input$archive_btn,
       {
         shiny::req(values$outlook, values$selected_email_id)
         tryCatch(
           {
             # Retrieve the message from Inbox
-            mail <- values$outlook$get_inbox()$get_email(values$selected_email_id)
+            mail <- values$outlook$get_inbox()$get_email(
+              values$selected_email_id
+            )
             # Mark as read
             mail$update(isRead = TRUE)
             # Move to Archive folder using Microsoft Graph API
@@ -1716,7 +1841,10 @@ email_run_app <- function(base_dir = NULL, ...) {
             } else {
               stop("Archive folder not found")
             }
-            shiny::showNotification("Email marked read and moved to Archive.", type = "message")
+            shiny::showNotification(
+              "Email marked read and moved to Archive.",
+              type = "message"
+            )
             # Refresh inbox
             values$emails_raw <- values$outlook$list_emails()
             values$emails_df <- purrr::map_dfr(
@@ -1725,7 +1853,10 @@ email_run_app <- function(base_dir = NULL, ...) {
             )
           },
           error = function(e) {
-            shiny::showNotification(paste("Error archiving email:", e$message), type = "error")
+            shiny::showNotification(
+              paste("Error archiving email:", e$message),
+              type = "error"
+            )
           }
         )
       },
@@ -1830,7 +1961,9 @@ email_run_app <- function(base_dir = NULL, ...) {
           rel = "stylesheet",
           href = "https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
         ),
-        shiny::tags$script(src = "https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"),
+        shiny::tags$script(
+          src = "https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+        ),
         shiny::tags$style(HTML(css)),
         shiny::tags$script(HTML(js))
       ),
